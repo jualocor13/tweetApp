@@ -1,0 +1,9 @@
+- name: Get update files from Gitlab
+  git:
+    repo:  https://jualocor13:glpat-H4sSX18Nd3hT2SwLjRJ-@gitlab.com/bootcamp7862726/nestjs
+    dest: /home/admin/project/
+    force: true
+    version: master
+  become: yes
+  environment:
+    GIT_SSL_NO_VERIFY: 1

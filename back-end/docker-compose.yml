@@ -1,0 +1,13 @@
+version: '3.4'
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: BackEnd
+    command:
+      sh -c "npm run start:dev"
+    ports:
+      - "8080:3000"
+      - "9229:9229"
+    restart: always

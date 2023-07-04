@@ -1,0 +1,77 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Docker.gitlab-ci.yml
+
+# Build a Docker image with CI/CD and push to the GitLab registry.
+# Docker-in-Docker documentation: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html
+#
+# This template uses one generic job with conditional builds
+# for the default branch and all other (MR) branches.
+
+stages:
+  - build
+  - deploy
+
+docker-build_back-end:
+  # Use the official docker image.
+  image: docker:latest
+  stage: build
+  variables:
+    COMMIT_TIME: $(git show -s --format=%ct $CI_COMMIT_SHA)
+    IMAGE_TAG_BACKEND: $CI_REGISTRY_IMAGE/backend:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # Default branch leaves tag empty (= latest tag)
+  # All other branches are tagged with the escaped branch name (commit ref slug)
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        tag=""
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+      else
+        tag=":$CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+      fi
+    - cd back-end
+    - docker build --pull -t "$IMAGE_TAG_BACKEND" .
+    - docker push "$IMAGE_TAG_BACKEND"
+
+docker-build_front-end:
+  # Use the official docker image.
+  image: docker:latest
+  stage: build
+  variables:
+    COMMIT_TIME: $(git show -s --format=%ct $CI_COMMIT_SHA)
+    IMAGE_TAG_FRONT: $CI_REGISTRY_IMAGE/front-end:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # Default branch leaves tag empty (= latest tag)
+  # All other branches are tagged with the escaped branch name (commit ref slug)
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        tag=""
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+      else
+        tag=":$CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+      fi
+    - cd front-end/basket-league
+    - docker build --pull -t "$IMAGE_TAG_FRONT" .
+    - docker push "$IMAGE_TAG_FRONT"
+
+
+deveploment_ansible:
+  image: cytopia/ansible
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - "cd deployment/prod"
+    - "ansible-playbook  ansible-playbook.yml  -i inventory"

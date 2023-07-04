@@ -1,0 +1,21 @@
+- name: Update Packages.
+  dnf:
+    name: '*'
+    state: latest
+
+- name: Install Git.
+  dnf:
+    name: git
+    state: latest
+- name: Install python-requests.
+  dnf:
+    name: python-requests
+    state: latest
+- name: Install epel Repository.
+  dnf:
+    name: epel-release
+    state: latest
+- name: Install python-pip.
+  dnf:
+    name: python-pip
+    state: latest

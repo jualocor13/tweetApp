@@ -1,0 +1,13 @@
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+
+- name: Install docker by pip.
+  apt:
+    name: docker
+    state: latest
+
+- name: Install docker by pip.
+  apt:
+    name: git
+    state: latest

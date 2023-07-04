@@ -1,0 +1,7 @@
+- name: Start docker-compose
+  docker_compose:
+    project_src: /home/admin/project/
+    debug: true
+    build: true
+    state: present
+    pull: yes

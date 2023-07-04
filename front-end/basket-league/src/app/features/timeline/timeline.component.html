@@ -1,0 +1,29 @@
+<div class="background">
+
+    <div class="card-header text-center py-4 border-0">
+        <h1 class="display-6 fw-bold">To los tweets</h1>
+    </div>
+    <div>
+        <div class="input-group">
+			<mat-form-field class="example-form-field">
+				<mat-label>Nuevo tweet</mat-label>
+				<input matInput type="text" [value] = this.value>
+			  </mat-form-field>
+			  <button mat-raised-button color="primary" (click)="this.postTweet(this.value)"> Enviar
+			</button>
+        </div>
+            <div *ngFor="let item of msg">
+				<mat-card class="example-card">
+					<mat-card-header>
+					  <mat-card-title-group>
+						<mat-card-title>{{item.msg}}</mat-card-title>
+						<img mat-card-sm-image src="https://picsum.photos/200">
+					  </mat-card-title-group>
+					</mat-card-header>
+					<mat-card-content>
+						{{item.owner ? item.owner.username : 'Anonimo' }}
+					</mat-card-content>
+				</mat-card>
+		</div>
+    </div>
+</div>

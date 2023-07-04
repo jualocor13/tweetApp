@@ -1,0 +1,14 @@
+services:
+  back-end:
+    container_name: back-end
+    image: registry.gitlab.com/bootcamp7862726/nestjs/backend:latest
+    ports:
+      - "3000:3000"
+    command:
+      sh -c "npm run start"
+
+  front-end:
+    image: registry.gitlab.com/bootcamp7862726/nestjs/front-end:latest
+    container_name: front-end
+    ports:
+      - "80:81"
